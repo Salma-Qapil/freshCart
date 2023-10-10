@@ -1,13 +1,28 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import OwlCarousel from 'react-owl-carousel';
 import 'owl.carousel/dist/assets/owl.carousel.css';
 import 'owl.carousel/dist/assets/owl.theme.default.css';
 import { Helmet } from 'react-helmet';
+import { CartContext } from '../../Context/CartContext';
+import toast, { Toaster } from 'react-hot-toast'
 
 export default function ProductDetails() {
+  let {addToCartData ,setCartCount }  =useContext(CartContext)
 
+  async function addCartDataaa(id){
+    let {data} = await  addToCartData(id)
+    if(data.status === "success"){
+    
+      setCartCount(data.numOfCartItems)
+    toast.success(data.message)
+    }else{
+      toast.error("Error")
+    }
+    console.log(data.data);
+    }
+    
 
   let {id} = useParams()
   let [productDetails , setProductDetails] = useState(null)
@@ -25,6 +40,7 @@ export default function ProductDetails() {
   return (
     <>
 {productDetails !=null?<div className="row my-5 align-items-center">
+  <Toaster/>
   <Helmet>
     <title>{productDetails?.title}</title>
   </Helmet>
@@ -54,7 +70,7 @@ return     <div className='item'>
   {productDetails.ratingsAverage}
 </span>
         </div>
-        <button className='w-100 btn bg-main text-white mt-4'>  <i className="fa-solid fa-bag-shopping mx-2 fa-1x"></i>Add To Cart</button>
+        <button onClick={()=>addCartDataaa(productDetails._id)} className='w-100 btn bg-main text-white mt-4'>  <i className="fa-solid fa-bag-shopping mx-2 fa-1x"></i>Add To Cart</button>
   </div>
 </div>
 :"" }
